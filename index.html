@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>電卓</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+            crossorigin="anonymous"
+        />
+        <link href="style.css" rel="stylesheet">
+        
+    </head>
+    <body id="Calcurator_body">
+        <div id="calculator-wrapper">
+            <div class="layout-wrapper">
+                <div class="container-area">
+                    <h1>電卓</h1>
+
+                    <div id="Display_Memory" hidden>
+                        <input type="text" class = "calc_text calc_memory" id="add_memory" readonly  />
+                        <span class="calc_Memory_exist">Memory</span>
+                    </div>
+                    
+                    <input type="text" class = "calc_text" id="add_number" readonly />
+                    <input type="text" class = "calc_info" id="add_calc" readonly />
+                    <span id="Display_Exist_Memory" class="calc_Memory_exist"></span>
+
+                    <div id="Display_Funciton_command" >
+                        <input type="text" class = "calc_command" id="add_function_command" readonly  />
+                        <span class="calc_Memory_exist">コマンド</span>
+                        <div id="command_suggestions" class="suggestion-box" hidden></div>
+                    </div>
+                    <!-- <br> -->
+                    
+                    <table id="Calcurator_Button">
+                        <tr>
+                            <th><button id="tr_clear" class="tr_button">C</button></th>
+                            <th><button id="tr_Allclear" class="tr_button">AC</button></th>
+                            <th><button id="tr_PlusMinus" class="tr_button">+/-</button></th>
+                            <th><button id="tr_BackSpace" class="tr_button">→</button></th>
+                        </tr>
+                        <tr>
+                            <th><button id="tr_MC" class="tr_button">MC</button></th>
+                            <th><button id="tr_MR" class="tr_button">MR</button></th>
+                            <th><button id="tr_Mplus" class="tr_button">M+</button></th>
+                            <th><button id="tr_Mminu" class="tr_button">M-</button></th>
+                        </tr>
+                        <tr class="Button_function">
+                            <th><button id="tr_Squared" class="tr_button">X^2</button></th>
+                            <th><button id="tr_Sqrt" class="tr_button">√(X)</button></th>
+                            <th><button id="tr_Factorial" class="tr_button">X!</button></th>
+                            <th><button id="tr_Dice" class="tr_button">賽子</button></th>
+                        </tr>
+                        <tr class="Button_function">
+                            <th><button id="tr_Floor" class="tr_button">[X]</button></th>
+                            <th><button id="tr_Log" class="tr_button">log(X)</button></th>
+                            <th><button id="tr_Ln" class="tr_button">ln(X)</button></th>
+                            <th><button id="tr_Exp" class="tr_button">exp(X)</button></th> 
+                        </tr>
+                        <tr class="Button_function">
+                            <th><button id="tr_Inde" class="tr_button">X^Y</button></th>
+                            <th><button id="tr_Loga" class="tr_button">logY(X)</button></th>
+                            <th><button id="tr_Modd" class="tr_button">Mod</button></th>
+                            <th><button id="tr_pow10" class="tr_button">10^X</button></th> 
+                        </tr>
+                        <tr class="Button_function">
+                            <th><button id="tr_Perm" class="tr_button">nPr</button></th>
+                            <th><button id="tr_Comb" class="tr_button">nCr</button></th>
+                            <th><button id="tr_Reciprocal" class="tr_button">X^-1</button></th>
+                            <th><button id="tr_Pi" class="tr_button">π</button></th> 
+                        </tr>
+                        <tr>
+                            <th><button id="tr_07" class="tr_button">7</button></th>
+                            <th><button id="tr_08" class="tr_button">8</button></th>
+                            <th><button id="tr_09" class="tr_button">9</button></th>
+                            <th><button id="tr_divi" class="tr_button">÷</button></th>
+                        </tr>
+                        <tr>
+                            <th><button id="tr_04" class="tr_button">4</button></th>
+                            <th><button id="tr_05" class="tr_button">5</button></th>
+                            <th><button id="tr_06" class="tr_button">6</button></th>
+                            <th><button id="tr_timm" class="tr_button">×</button></th>
+                        </tr>
+                        <tr>
+                            <th><button id="tr_01" class="tr_button">1</button></th>
+                            <th><button id="tr_02" class="tr_button">2</button></th>
+                            <th><button id="tr_03" class="tr_button">3</button></th>
+                            <th><button id="tr_minu" class="tr_button">ー</button></th>
+                        </tr>
+                        <tr>
+                            <th><button id="tr_00" class="tr_button">0</button></th>
+                            <th><button id="tr_dot" class="tr_button">.</button></th>
+                            <th><button id="tr_equa" class="tr_button">＝</button></th>
+                            <th><button id="tr_plus" class="tr_button">＋</button></th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="settings-area">
+                    <details class="my-2" id="detail_setting">
+                        <summary class="h6 mb-2">⚙️ 設定を開く/閉じる</summary>
+
+                        <div class="setting-title">◇数字表示◇</div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_round" checked>
+                                <label for="chk_round">小数の丸め表示（最大10桁）</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Error">
+                                <label for="chk_Error">Infinity/NaNを表示</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Infinity" checked>
+                                <label for="chk_Infinity">1.00e+16より大きい値をInfinity表示</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Zero" checked>
+                                <label for="chk_Zero">1.00e-16より小さい値を0表示</label>
+                            </div>
+
+                        <div class="setting-title">◇ボタン表示◇</div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Button" checked>
+                                <label for="chk_Button">ボタンを表示</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_DisplayFunction">
+                                <label for="chk_DisplayFunction">関数計算</label>
+                            </div>
+
+                        <div class="setting-title">◇メモリー◇</div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_DisplayMemory">
+                                <label for="chk_DisplayMemory">メモリー表示</label>
+                            </div>
+
+                        <div class="setting-title">◇コマンド◇</div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Command">
+                                <label for="chk_Command">コマンドを表示</label>
+                            </div>
+
+                        <div class="setting-title">◇計算◇</div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="chk_Degree">
+                                <label for="chk_Degree">三角関数の角度をラジアンで計算</label>
+                            </div>
+
+                    </details>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="code.js"></script>
+</html>

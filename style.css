@@ -1,0 +1,184 @@
+.tr_button{
+  width: 90px; 
+  height: 45px;
+  font-size: 20px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 0 #ccc;
+  transition: all .05s ease;
+}
+.tr_button:active{
+  box-shadow: none;
+  transform: translateY(2px);
+  background-color: #e6e6e6;
+}
+
+.calc_text{
+    width: 400px;
+    height: 50px;
+    font-size: 30px;
+    text-align: right;
+}
+
+.calc_info{
+    width: 80px;
+    height: 50px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.calc_memory{
+    background-color: beige;
+}
+
+.calc_command{
+    width: 400px;
+    height: 50px;
+    font-size: 30px;
+    text-align: left;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;      /* 横中央 */
+  align-items: flex-start;      /* ← 縦は上揃えにする */
+  min-height: 100vh;            /* 全体の高さ確保（必要に応じて） */
+  padding-top: 2rem;            /* 少し上に余白をつけると自然 */
+  margin: 0;
+  background-color: #f8f9fa;    /* 任意の背景色 */
+}
+
+.layout-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.calculator-area {
+  max-width: 500px;
+  flex-shrink: 0;
+}
+
+.settings-area {
+  width: 300px;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  font-size: 14px;
+}
+
+
+.calc_Memory_exist{
+    width: 400px;
+    height: 50px;
+    font-size: 30px;
+}
+
+.suggestion-box {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 14px;
+  margin-top: 4px;
+  padding: 4px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 10;
+}
+
+.suggestion-box div {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.suggestion-box div:hover {
+  background-color: #e0e0e0;
+}
+
+.suggestion-item {
+  padding: 6px 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.cmd-desc {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.setting-title {
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  margin-left: 1em;       /* ← ラベル行全体の字下げ */
+  margin-bottom: 4px;
+}
+
+.setting-item input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+
+/* 回転アニメーション */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 1回転（終了後は元の角度に戻る）*/
+.effect-spin-once {
+  animation: spin 3s linear;
+}
+
+/* 追加：540°まで回すkeyframes */
+@keyframes spin-onehalf {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(540deg); }
+}
+
+/* 修正：iteration-countは不要 */
+.effect-spin-onehalf {
+  animation: spin-onehalf 4.5s linear forwards;
+}
+
+
+/* 無限回転（トグルでON/OFF）*/
+.effect-spin-infinite {
+  animation: spin 8s linear infinite;
+}
+
+/* 画面傾き（角度自体はJSでinline指定） */
+.effect-askew {
+  will-change: transform; /* パフォーマンス向上 */
+}
+
+/* 視覚効果を一括で外すためのヘルパー（必要なら） */
+.effect-reset {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* ユーザーの簡易アクセシビリティ配慮（強すぎる動きを抑制）*/
+@media (prefers-reduced-motion: reduce) {
+  .effect-spin-once,
+  .effect-spin-onehalf,
+  .effect-spin-infinite,
+  .effect-askew {
+    animation-duration: 2s !important;
+  }
+}
+
