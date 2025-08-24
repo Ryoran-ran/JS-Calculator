@@ -109,6 +109,9 @@ const unit_rad = 602;
 // ===== 視覚エフェクト用ユーティリティ =====
 const WRAPPER_ID = "calculator-wrapper";
 
+// 補助：チェック有無の安全判定
+const isChecked = el => !!(el && el.checked);
+
 //コマンド候補
 const commandList = [
     { cmd: "M", desc: "+:メモリーに加算｜-:メモリーを減算" },
@@ -2305,132 +2308,94 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-// 表示フォーマッタ（丸めON/OFFに対応）
-function showResult(val) {
-    // 内部値を保持
-    add_number.dataset.exact = String(val);
+// 表示フォーマッタ
+function showResult(v) {
+  const val = Number(v);
+  add_number.dataset.exact = String(v); 
 
-    // Infinity / NaN をチェックして、chk_Error が未チェックなら「エラー」表示
-    if (!Number.isFinite(val) && (!chk_Error || !chk_Error.checked)) {
-        // add_number.dataset.exact = "NaN";
-        add_number.value = "エラー";
-        return;
-    }
-       
+  const suppressErrorText = !isChecked(chk_Error);
 
-    // 非数や無限大はそのまま
-    if (!Number.isFinite(val)) {
-        add_number.value = String(val);
-        return;
-    }
+  // ① 非有限（NaN / ±Infinity）
+  if (!Number.isFinite(val)) {
+    add_number.value = suppressErrorText ? "エラー" : String(val);
+    return;
+  }
 
-    // 丸めOFF
-    if (!chk_round || !chk_round.checked) {
-        add_number.value = String(val);
-        return;
-    }
+  const absVal = Math.abs(val);
 
-    const absVal = Math.abs(val);
+  // ② 閾値変換（丸めより優先／独立）
+  // 2-1: 1.00e+16 より大きい → Infinity 表示
+  if (isChecked(chk_Infinity) && absVal > 1e16) {
+    add_number.value = suppressErrorText ? "エラー" : (val < 0 ? "-Infinity" : "Infinity");
+    return;
+  }
+  // 2-2: 0より大きく 1.00e-16 以下 → 0 表示
+  if (isChecked(chk_Zero) && absVal > 0 && absVal <= 1e-16) {
+    add_number.value = "0";
+    return;
+  }
 
-    // 極端な値は強制変換
-    if (chk_Infinity && chk_Infinity.checked) {
-        if (absVal >= 1e16) {
-            if(!chk_Error || !chk_Error.checked){
-                add_number.value = "エラー";
-            }
-            else{
-                if(val < 0){
-                    add_number.value = "-Infinity";  
-                }
-                else{
-                    add_number.value = "Infinity";
-                }
-            }
-            
-            return;
-        }
-    }
+  // ③ 丸め OFF：そのまま（※ここでは指数表記にしない）
+  if (!isChecked(chk_round)) {
+    add_number.value = String(val);
+    return;
+  }
 
-    if (chk_Zero && chk_Zero.checked) {
-        if (absVal > 0 && absVal <= 1e-16) {
-            add_number.value = "0";
-            return;
-        }
-    }
+  // ④ 丸め ON：ここでだけ指数表記を許可
+  if (absVal !== 0 && (absVal <= 1e-10 || absVal >= 1e10)) {
+    add_number.value = val.toExponential(2); // 小数2桁（有効3桁）
+    return;
+  }
 
-    if (absVal !== 0 && (absVal <= 1e-10 ||absVal >= 1e10)) {
-        // 指数表記（小数点第2位まで、末尾0保持）
-        add_number.value = val.toExponential(2);
-    }
-    else {
-        // 通常表記（末尾0と不要な小数点削除）
-        let s = val.toFixed(10);
-        s = s.replace(/\.?0+$/, "");
-        add_number.value = s;
-    }
+  // ⑤ 丸め ON の通常表記（最大10桁、小数点と末尾0を整理）
+  let s = val.toFixed(10);
+  s = s.replace(/\.?0+$/, "");
+  add_number.value = s;
 }
 
+//メモリー表示
+function showMemory(v) {
+  const val = Number(v);
+  add_memory.dataset.exact = String(v);
 
-function showMemory(val) {
-    if (!Number.isFinite(val) && (!chk_Error || !chk_Error.checked)) {
-        // add_memory.dataset.exact = "NaN";
-        add_memory.value = "エラー";
-        return;
-    }
+  const suppressErrorText = !isChecked(chk_Error);
 
-    // 内部値を保持
-    add_memory.dataset.exact = String(val);
+  // ① 非有限（NaN / ±Infinity）
+  if (!Number.isFinite(val)) {
+    add_memory.value = suppressErrorText ? "エラー" : String(val);
+    return;
+  }
 
-    // 非数や無限大はそのまま
-    if (!Number.isFinite(val)) {
-        add_memory.value = String(val);
-        return;
-    }
+  const absVal = Math.abs(val);
 
-    // 丸めOFF
-    if (!chk_round || !chk_round.checked) {
-        add_memory.value = String(val);
-        return;
-    }
+  // ② Infinity変換（丸め設定より優先）
+  if (isChecked(chk_Infinity) && absVal > 1e16) {
+    add_memory.value = suppressErrorText ? "エラー" : (val < 0 ? "-Infinity" : "Infinity");
+    return;
+  }
 
-    const absVal = Math.abs(val);
+  // ③ Zero変換
+  if (isChecked(chk_Zero) && absVal > 0 && absVal <= 1e-16) {
+    add_memory.value = "0";
+    return;
+  }
 
-    // 極端な値は強制変換
-    if (chk_Infinity && chk_Infinity.checked) {
-        if (absVal >= 1e16) {
-            if(!chk_Error || !chk_Error.checked){
-                add_memory.value = "エラー";
-            }
-            else{
-                if(val < 0){
-                    add_memory.value = "-Infinity";  
-                }
-                else{
-                    add_memory.value = "Infinity";
-                }
-            }
-            
-            return;
-        }
-    }
+  // ④ 丸めOFF → そのまま表示（指数表記なし）
+  if (!isChecked(chk_round)) {
+    add_memory.value = String(val);
+    return;
+  }
 
-    if (chk_Zero && chk_Zero.checked) {
-        if (absVal > 0 && absVal <= 1e-16) {
-            add_memory.value = "0";
-            return;
-        }
-    }
+  // ⑤ 丸めON → この時だけ指数表記許可
+  if (absVal !== 0 && (absVal <= 1e-10 || absVal >= 1e10)) {
+    add_memory.value = val.toExponential(2); // 小数点第2位まで
+    return;
+  }
 
-    if (absVal !== 0 && (absVal <= 1e-9 ||absVal >= 1e9)) {
-        // 指数表記（小数点第2位まで、末尾0保持）
-        add_memory.value = val.toExponential(2);
-    } 
-    else {
-        // 通常表記（末尾0と不要な小数点削除）
-        let s = val.toFixed(10);
-        s = s.replace(/\.?0+$/, "");
-        add_memory.value = s;
-    }
+  // ⑥ 丸めONの通常表記（最大10桁、小数点と末尾0を整理）
+  let s = val.toFixed(10);
+  s = s.replace(/\.?0+$/, "");
+  add_memory.value = s;
 }
 
 
