@@ -2135,7 +2135,7 @@ function SaveMemory(AIntNum ,AIntMode){
     const DIntMemory = {Memory : 0};
 
     if(!isStrictNumber(AIntNum)){
-        DIntClucMemory = 0;
+        return Memory_storage;
     }
 
     //M+の場合はメモリーに加算、M-の場合魔メモリーに減算
